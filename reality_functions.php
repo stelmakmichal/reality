@@ -1,14 +1,20 @@
 <?php
 
-/*
-Plugin Name: Reality modul
-Plugin URI: http://www.gakosreal.sk
-Description: Zásuvný modul pre realitnú kanceláriu GA-KOS s.r.o., rozširujúci základné vlastnosti systému Wordpress o správu nehnuteľností a realitných maklérov.
-Version: 1.0
-Author: Lukáš Staroň
-Author URI: lukas.staron@gmail.com
-*/
+/***************************************************************************************************************** 
+  Plugin Name: Reality modul
+  Plugin URI: http://www.gakosreal.sk
+  Description: Zásuvný modul pre realitnú kanceláriu GA-KOS s.r.o., rozširujúci základné vlastnosti systému Wordpress o správu nehnuteľností a realitných maklérov.
+  Version: 1.0
+  Author: Lukáš Staroň
+  Author URI: lukas.staron@gmail.com
+*****************************************************************************************************************/
 
+
+/***************************************************************************************************************** 
+  Zakladne opatrenia a definicie
+*****************************************************************************************************************/
+ 
+ 
 // Zamedzenie pokusu o neopravneny pristup
 if ( ! function_exists( 'is_admin' ) ) { header( 'Status: 403 Forbidden' ); header( 'HTTP/1.1 403 Forbidden' ); exit(); }
 
@@ -18,31 +24,51 @@ if ( ! defined( 'WP_CONTENT_DIR' ) ) { define( 'WP_CONTENT_DIR', ABSPATH . 'wp-c
 if ( ! defined( 'REALITY_URL' ) ) { define( 'REALITY_URL', WP_PLUGIN_URL . '/reality' );}
 if ( ! defined( 'REALITY_DIR' ) ) { define( 'REALITY_DIR', WP_PLUGIN_DIR . '/reality' );}
 
-if ( ! class_exists( 'reality' ) ) {
 
+/***************************************************************************************************************** 
+  Zadefinovanie tried, jej argumentov a metod:
+  --------------------------------------------
+  _construct - registruje vsetky akcie pluginu, vytvara defaultne nastavenia a pod.
+  activate - aktivuje plugin
+  deactivate - deaktivuje plugin
+  menu - registruje navigaciu pluginu v administracii
+  reality_main - inkluduje subor so zakladnymi popismi pluginu, ...
+  reality_options - inkluduje subor, ktory sprostredkuva zakladne nastavenia pluginu
+  rename_admin_menu_items - upravuje nazvy poloziek menu na mieru
+  user_profile - rozsiruje a upravuje profily pouzivatelov
+  save_user_profile - stara sa o ukladanie hodnot doplnenych poli do databazy - wp_user_meta 
+  
+*****************************************************************************************************************/
+ 
+
+if ( ! class_exists( 'reality' ) ) {
 	
 	class reality {
-		
+  
 
-		// Konstruktor
-		function __construct() {
+/*****************************************************************************************************************
+  Konstruktor
+*****************************************************************************************************************/
+	
+  
+    function __construct() {
 			
 			global $wpdb;
-		      
+      
 			// Aktivuje plugin
 			register_activation_hook( __FILE__, array( &$this, 'activate' ) );
 			
-			// Deaktivuje plugin
+      // Deaktivuje plugin
 			register_deactivation_hook( __FILE__, array( &$this, 'deactivate' ) );	
 			
-			// Zaregistruje akciu pre vztvorenie menu pluginu v amdinistracii
+      // Zaregistruje akciu pre vztvorenie menu pluginu v amdinistracii
 			add_action( 'admin_menu', array( &$this, 'menu' ) );
 			
-			// Prepise existujuce nazvy poloziek administracneho menu na nove tvary
+      // Prepise existujuce nazvy poloziek administracneho menu na nove tvary
 			add_filter('gettext', array( &$this, 'rename_admin_menu_items' ) ) ;
 			add_filter('ngettext', array( &$this, 'rename_admin_menu_items' ) ) ;
 			
-			// Rozsirenie profilu pouzivatelov o nove polozky
+      // Rozsirenie profilu pouzivatelov o nove polozky
 			add_action( 'show_user_profile', array( &$this, 'user_profile' ) ) ;
 			add_action( 'edit_user_profile', array( &$this, 'user_profile' ) ) ;		
 			add_action( 'personal_options_update', array( &$this, 'save_user_profile' ) ) ;
@@ -50,101 +76,120 @@ if ( ! class_exists( 'reality' ) ) {
 
 		}
 		
-		
-		
-		// Aktivacia zasuvneho modulu
-		public function activate() {
-			
+    	
+/*****************************************************************************************************************
+  Aktivacia zasuvneho modulu
+*****************************************************************************************************************/		
+	
+  
+    public function activate() {
 			global $wpdb;
-			
-			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-
-	  			if ( isset( $_GET[ 'networkwide' ] ) && ( $_GET[ 'networkwide' ] == 1 ) ) {
+		
+    	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
+	  		
+        	if ( isset( $_GET[ 'networkwide' ] ) && ( $_GET[ 'networkwide' ] == 1 ) ) {
 	  				
-	  				$old_blog = $wpdb->blogid;
+            $old_blog = $wpdb->blogid;
 	  				$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
 	  				
-	  				foreach ( $blogids as $blog_id ) {
-	  					switch_to_blog( $blog_id );
-	  				}
-	  				
+            foreach ( $blogids as $blog_id ) { switch_to_blog( $blog_id ); }
+            
 	  				switch_to_blog( $old_blog );
 	  				return;
-	  				
-	  			}	
 	  		
-			} 
-				
+        	}	
+		
+    	} 
 		}
 		
 		
-		
-		// Deaktivacia zasuvneho modulu
+/*****************************************************************************************************************
+  Deaktivacia zasuvneho modulu
+*****************************************************************************************************************/		
+
+
 		public function deactivate() {
 			
-			global $wpdb;
+      global $wpdb;
 			
-			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-  				
-				if ( isset( $_GET[ 'networkwide'] ) && ( $_GET[ 'networkwide' ] == 1 ) ) {
-  					
-					$old_blog = $wpdb->blogid;
-  					$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
-  					
-  					foreach ( $blogids as $blog_id ) {
-  						switch_to_blog( $blog_id );
-  					}
-  			
-  					switch_to_blog( $old_blog );
-  					return;
-  				
-				}	
-  			
-			} 
+      if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 				
-		}
+        if ( isset( $_GET[ 'networkwide'] ) && ( $_GET[ 'networkwide' ] == 1 ) ) {
+         
+          $old_blog = $wpdb->blogid;
+  				$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
+  				
+          foreach ( $blogids as $blog_id ) { witch_to_blog( $blog_id ); }
+  			
+        	switch_to_blog( $old_blog );
+  				return;
+				
+        }	
+			
+      } 
+		
+    }
 		
 		
+/*****************************************************************************************************************
+  Vytvorenie navigacie v administracii
+*****************************************************************************************************************/
 
-		// Vytvorenie navigacie v administracii
+
 		public function menu() {
-			
-			// Pridaj menu na top urovni
-	    	add_menu_page( 'Reality GAKOS', 'Reality GAKOS', 'manage_options', 'menu', array( &$this, 'reality_main' ), REALITY_URL.'/img/reality_icon_16x16.png' );
-	    	
-	      	// Pridaj submenu
-	      	add_submenu_page( 'menu', 'Nastavenia', 'Nastavenia', 'manage_options', 'options.php', array( &$this, 'reality_options' ) );	
-	      
-		}	
+    
+		  // Pridaj menu na top urovni
+	    add_menu_page( 'Reality GAKOS', 'Reality GAKOS', 'manage_options', 'menu', array( &$this, 'reality_main' ), REALITY_URL.'/img/reality_icon_16x16.png' );
+	    
+      // Pridaj submenu
+	    add_submenu_page( 'menu', 'Nastavenia', 'Nastavenia', 'manage_options', 'options.php', array( &$this, 'reality_options' ) );	
+		
+    }	
 	  	
-		
-		
-	  	public function reality_main() { include_once( 'reality_main.php' ); }
-	    public function reality_options() { include_once ( 'reality_options.php' );	}
+      
+/*****************************************************************************************************************
+  Volania suboru zakladnych informacii o plugine
+*****************************************************************************************************************/
+
+
+	  public function reality_main() { include_once( 'reality_main.php' ); }
+    
+    
+/*****************************************************************************************************************
+  Volanie suboru nastaveni pluginu
+*****************************************************************************************************************/
+    
+   
+	  public function reality_options() { include_once ( 'reality_options.php' );	}
 	  	
 	    
-	    
-	  	// Premenovanie poloziek administracneho menu
+/*****************************************************************************************************************
+  Premenovanie poloziek administracneho menu
+*****************************************************************************************************************/	    
+
+
 		public function rename_admin_menu_items( $menu ) {
-			
-			$menu = str_ireplace( 'Články', 'Nehnuteľnosti', $menu );
+		
+    	$menu = str_ireplace( 'Články', 'Nehnuteľnosti', $menu );
 			$menu = str_ireplace( 'články', 'nehnuteľnosti', $menu );
 			$menu = str_ireplace( 'Používatelia', 'Makléri', $menu );
 			$menu = str_ireplace( 'používatelia', 'makléri', $menu );
 			$menu = str_ireplace( 'používateľa', 'makléra', $menu );
 			
-			return $menu;
-
+      return $menu;
+      
 		}
 		
-		
-		
-		// Rozsirenie profilu pouzivatelov o nove polia
+    
+/*****************************************************************************************************************
+  Rozsirenie profilu pouzivatelov o nove polia
+*****************************************************************************************************************/
+
+
 		public function user_profile( $user ) {
+    
 			?>
-			
 			<h3>Rozširujúce kontaktné údaje</h3>
- 
 			<table class='form-table'>
 			    <tr>
 			        <th><label for='street'>Ulica</label></th> 
@@ -183,31 +228,43 @@ if ( ! class_exists( 'reality' ) ) {
 			    </tr> 
 			</table>
 		<?php 	
-
+    
 		}
 		
-		
-		// Ulozenie obsahu novych poli do db
-		public function save_user_profile( $user_id ) {
-			
-			if ( current_user_can( 'edit_user', $user_id ) ){
+    
+/*****************************************************************************************************************
+  Ulozenie obsahu novych poli do db
+*****************************************************************************************************************/		
 
-	   			update_user_meta( $user_id, 'street', $_POST['street'] );
+
+		public function save_user_profile( $user_id ) {
+		
+    	if ( current_user_can( 'edit_user', $user_id ) ){
+	   		         
+         	update_user_meta( $user_id, 'street', $_POST['street'] );
 	   			update_user_meta( $user_id, 'city', $_POST['city'] );
 	   			update_user_meta( $user_id, 'postal_code', $_POST['postal_code'] );
 	   			update_user_meta( $user_id, 'country', $_POST['country'] );
 	   			update_user_meta( $user_id, 'phone', $_POST['phone'] );
-   			
-			}	
 			
-		}
+      }	
+		
+    }
+
+
+	}	
   
-	}
-	
 }
 
-// Registracia globalnej premennej a vytvorenie objektu triedy
+
+/*****************************************************************************************************************
+  Registracia globalnej premennej a vytvorenie objektu triedy
+*****************************************************************************************************************/		
+
+
 global $reality;
 if ( class_exists( 'reality' ) && ! $reality ) { $reality = new reality(); }	
+
+
 
 ?>
