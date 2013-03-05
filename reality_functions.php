@@ -39,10 +39,8 @@ if ( ! defined( 'RWMB_DIR' ) ) 			{ define( 'RWMB_DIR', trailingslashit( REALITY
   rename_admin_menu_items - upravuje nazvy poloziek menu na mieru
   user_profile - rozsiruje a upravuje profily pouzivatelov
   save_user_profile - stara sa o ukladanie hodnot doplnenych poli do databazy - wp_user_meta 
-  reality_metabox_add - zaregistrovanie rozsirujuceho metaboxu vo WordPresse
-  reality_metabox_def - definovanie struktury metaboxu, kt. pridava nove polia do administracie clankov
-  reality_metabox_show - styly a forma rozsirujucich poli
-  reality_metabox_save - uklada udaje z poli do wp_post_meta pre kazdy clanok
+  reality_metabox_add - definovanie struktury metaboxu, kt. pridava nove polia do administracie clankov
+  reality_metabox_def - zaregistrovanie metaboxov a vytvorenie objektu triedy
   
 *****************************************************************************************************************/
  
@@ -88,9 +86,8 @@ if ( ! class_exists( 'reality' ) ) {
 	    	add_action( 'admin_init', array( &$this, 'reality_metabox_def' ) ) ;
 	    	
 		}
-		
-			
-    	
+
+			 	
 /*****************************************************************************************************************
   Aktivacia zasuvneho modulu
 *****************************************************************************************************************/		
@@ -274,10 +271,7 @@ if ( ! class_exists( 'reality' ) ) {
 
     
 		public function reality_metabox_add() {
-			
-			// mytheme_add_box		-	reality_metabox_def
-			// mytheme_show_box		-	reality_metabox_show
-			// mytheme_save_data	-	reality_metabox_save
+
 			
 			$prefix = 'reality_';
 
@@ -285,13 +279,14 @@ if ( ! class_exists( 'reality' ) ) {
 			
 			$meta_boxes = array();
 			
-			// 1st meta box
+    
+			// Volba entity
 			$meta_boxes[] = array(
 				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
-				'id' => 'byty',
+				'id' => 'entita',
 			
 				// Meta box title - Will appear at the drag and drop handle bar. Required.
-				'title' => 'Rozširujúce informácie o nehnuteľnosti',
+				'title' => 'Voľba typu nehnuteľnosti',
 			
 				// Post types, accept custom post types as well - DEFAULT is array('post'). Optional.
 				'pages' => array( 'post' ),
@@ -311,11 +306,50 @@ if ( ! class_exists( 'reality' ) ) {
 						'type'     => 'select',
 						// Array of 'value' => 'Label' pairs for select box
 						'options'  => array(
-							'value1' => 'Predaj',
-							'value2' => 'Prenájom',
+							'value1' => 'Byt',
+							'value2' => 'Dom',
+							'value3' => 'Pozemok',
+							'value4' => 'Ostatné',
 						),
 						// Select multiple values, optional. Default is false.
 						'multiple' => false,
+					),
+				)			
+			);
+			
+			
+			// Zakladne informacie pre vsetky entity
+			$meta_boxes[] = array(
+				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
+				'id' => 'vseobecne',
+			
+				// Meta box title - Will appear at the drag and drop handle bar. Required.
+				'title' => 'Zakladné informácie o nehnuteľnosti',
+			
+				// Post types, accept custom post types as well - DEFAULT is array('post'). Optional.
+				'pages' => array( 'post' ),
+			
+				// Where the meta box appear: normal (default), advanced, side. Optional.
+				'context' => 'normal',
+			
+				// Order of meta box: high (default), low. Optional.
+				'priority' => 'high',
+			
+				// List of meta fields
+				'fields' => array(
+					// SELECT BOX
+					array(
+						'name'     => 'Nehnuteľnosť na',
+						'id'       => "{$prefix}typ",
+						'type'     => 'select',
+						// Array of 'value' => 'Label' pairs for select box
+						'options'  => array(
+							'predaj' => 'Predaj',
+							'prenajom' => 'Prenájom',
+						),
+						// Select multiple values, optional. Default is false.
+						'multiple' => true,
+						'desc'  => 'Pre výber viacerých možností držte klávesu CTRL a klikmi ľavým tlačidlom myši vyberajte',
 					),
 					// TEXT
 					array(
@@ -323,11 +357,7 @@ if ( ! class_exists( 'reality' ) ) {
 						'name'  => 'Kraj',
 						// Field ID, i.e. the meta key
 						'id'    => "{$prefix}kraj",
-						// Field description (optional)
-						'desc'  => 'Text description',
 						'type'  => 'text',
-						// Default value (optional)
-						'std'   => 'Default text value',
 						// CLONES: Add to make the field cloneable (i.e. have multiple value)
 						'clone' => false,
 					),
@@ -336,11 +366,7 @@ if ( ! class_exists( 'reality' ) ) {
 						'name'  => 'Okres',
 						// Field ID, i.e. the meta key
 						'id'    => "{$prefix}okres",
-						// Field description (optional)
-						'desc'  => 'Text description',
 						'type'  => 'text',
-						// Default value (optional)
-						'std'   => 'Default text value',
 						// CLONES: Add to make the field cloneable (i.e. have multiple value)
 						'clone' => false,
 					),
@@ -349,68 +375,116 @@ if ( ! class_exists( 'reality' ) ) {
 						'name'  => 'Mesto',
 						// Field ID, i.e. the meta key
 						'id'    => "{$prefix}mesto",
-						// Field description (optional)
-						'desc'  => 'Text description',
 						'type'  => 'text',
-						// Default value (optional)
-						'std'   => 'Default text value',
+						// CLONES: Add to make the field cloneable (i.e. have multiple value)
+						'clone' => false,
+					),
+					array(
+						// Field name - Will be used as label
+						'name'  => 'PSČ',
+						// Field ID, i.e. the meta key
+						'id'    => "{$prefix}psc",
+						'type'  => 'text',
+						// CLONES: Add to make the field cloneable (i.e. have multiple value)
+						'clone' => false,
+					),
+					array(
+						// Field name - Will be used as label
+						'name'  => 'Ulica',
+						// Field ID, i.e. the meta key
+						'id'    => "{$prefix}ulica",
+						'type'  => 'text',
 						// CLONES: Add to make the field cloneable (i.e. have multiple value)
 						'clone' => false,
 					),
 					// NUMBER
 					array(
-						'name' => 'Cena od',
-						'id'   => "{$prefix}cena_od",
+						'name' => 'Cena',
+						'id'   => "{$prefix}cena",
 						'type' => 'number',
-			
 						'min'  => 0,
-						'step' => 1000,
+						'step' => 10,
+						'desc'  => 'Menou je €',
 					),
 					// NUMBER
 					array(
-						'name' => 'Cena do',
-						'id'   => "{$prefix}cena_do",
+						'name' => 'Výmera',
+						'id'   => "{$prefix}vymera",
 						'type' => 'number',
-			
-						'min'  => 0,
-						'step' => 1000,
-					),
-					// NUMBER
-					array(
-						'name' => 'Výmer od',
-						'id'   => "{$prefix}vymera_od",
-						'type' => 'number',
-			
 						'min'  => 0,
 						'step' => 5,
+						'desc'  => 'Jednotkou je m<sup>2</sup>',
 					),
-					// NUMBER
+					// SELECT BOX
 					array(
-						'name' => 'Vymera do do',
-						'id'   => "{$prefix}vymera_do",
-						'type' => 'number',
-			
-						'min'  => 0,
-						'step' => 5,
+						'name'     => 'Zodpovedný maklér',
+						'id'       => "{$prefix}makler",
+						'type'     => 'select',
+						// Array of 'value' => 'Label' pairs for select box
+						'options'  => array(
+							'value1' => 'Meno1 Priezvisko1',
+							'value2' => 'Meno2 Priezvisko2',
+							'value3' => 'Meno3 Priezvisko3',
+							'value4' => 'Meno4 Priezvisko4',
+							'value5' => 'Meno5 Priezvisko5',
+							'value6' => 'Meno6 Priezvisko6',
+							'value7' => 'Meno7 Priezvisko7',
+							'value8' => 'Meno8 Priezvisko8',
+						),
+						// Select multiple values, optional. Default is false.
+						'multiple' => false,
 					),
-					// CHECKBOX LIST
+					// PLUPLOAD IMAGE UPLOAD (WP 3.3+)
+					array(
+						'name'             => 'Fotografie nehnuteľnosti',
+						'id'               => "{$prefix}fotografie",
+						'type'             => 'plupload_image',
+						'max_file_uploads' => 20,
+					),
+				)			
+			);
+			
+			
+      		// Rozsirujuce informacie pre byty
+			$meta_boxes[] = array(
+				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
+				'id' => 'byty',
+			
+				// Meta box title - Will appear at the drag and drop handle bar. Required.
+				'title' => 'Rozširujúce informácie o byte',
+			
+				// Post types, accept custom post types as well - DEFAULT is array('post'). Optional.
+				'pages' => array( 'post' ),
+			
+				// Where the meta box appear: normal (default), advanced, side. Optional.
+				'context' => 'normal',
+			
+				// Order of meta box: high (default), low. Optional.
+				'priority' => 'high',
+			
+				// List of meta fields
+				'fields' => array(
+					// NUMBER
 					array(
 						'name' => 'Počet izieb',
 						'id'   => "{$prefix}pocet_izieb",
-						'type' => 'checkbox_list',
-						// Options of checkboxes, in format 'value' => 'Label'
-						'options' => array(
-							'value1' => '1',
-							'value2' => '2',
-							'value3' => '3',
-							'value4' => '4',
-							'value5' => '5 a viac',
-							'value6' => 'garzónka',
-						),
+						'type' => 'number',
+						'min'  => 0,
+						'step' => 1,
+						'desc'  => 'Je možné zadávať aj desatinné čísla',
+					),
+					// NUMBER
+					array(
+						'name' => 'Poschodie',
+						'id'   => "{$prefix}poschodie",
+						'type' => 'number',
+						'min'  => 0,
+						'step' => 1,
+						'desc'  => 'Pre prízemie zvoľte číslo 0',
 					),
 					// CHECKBOX
 					array(
-						'name' => 'Loggia/balkón',
+						'name' => 'Loggia alebo balkón',
 						'id'   => "{$prefix}loagia_balkon",
 						'type' => 'checkbox',
 						// Value can be 0 or 1
@@ -434,55 +508,15 @@ if ( ! class_exists( 'reality' ) ) {
 					),
 					// CHECKBOX
 					array(
-						'name' => 'Tehlové byty',
-						'id'   => "{$prefix}tehlove_byty",
+						'name' => 'Tehlový byt',
+						'id'   => "{$prefix}tehlovy_byt",
 						'type' => 'checkbox',
 						// Value can be 0 or 1
 						'std'  => 0,
 					),
 					// CHECKBOX
 					array(
-						'name' => 'prizemie',
-						'id'   => "{$prefix}prizemie",
-						'type' => 'checkbox',
-						// Value can be 0 or 1
-						'std'  => 0,
-					),
-					// CHECKBOX
-					array(
-						'name' => '1. poschodie',
-						'id'   => "{$prefix}poschodie_1",
-						'type' => 'checkbox',
-						// Value can be 0 or 1
-						'std'  => 0,
-					),
-					// CHECKBOX
-					array(
-						'name' => '2. - 5. poschodie',
-						'id'   => "{$prefix}poschodie_2_5",
-						'type' => 'checkbox',
-						// Value can be 0 or 1
-						'std'  => 0,
-					),
-					// CHECKBOX
-					array(
-						'name' => '6. - predposledné',
-						'id'   => "{$prefix}poschodie_6_predposledne",
-						'type' => 'checkbox',
-						// Value can be 0 or 1
-						'std'  => 0,
-					),
-					// CHECKBOX
-					array(
-						'name' => 'Posledné poschodie',
-						'id'   => "{$prefix}posledne_poschodie",
-						'type' => 'checkbox',
-						// Value can be 0 or 1
-						'std'  => 0,
-					),
-					// CHECKBOX
-					array(
-						'name' => 'pôvodný stav',
+						'name' => 'Pôvodný stav',
 						'id'   => "{$prefix}povodny_stav",
 						'type' => 'checkbox',
 						// Value can be 0 or 1
@@ -490,7 +524,7 @@ if ( ! class_exists( 'reality' ) ) {
 					),
 					// CHECKBOX
 					array(
-						'name' => 'novostavba',
+						'name' => 'Novostavba',
 						'id'   => "{$prefix}novostavba",
 						'type' => 'checkbox',
 						// Value can be 0 or 1
@@ -498,7 +532,7 @@ if ( ! class_exists( 'reality' ) ) {
 					),
 					// CHECKBOX
 					array(
-						'name' => 'rekonštrukcia',
+						'name' => 'Rekonštrukcia',
 						'id'   => "{$prefix}rekonstrukcia",
 						'type' => 'checkbox',
 						// Value can be 0 or 1
@@ -506,55 +540,203 @@ if ( ! class_exists( 'reality' ) ) {
 					),
 					// CHECKBOX
 					array(
-						'name' => 'čiastočná rekon.',
-						'id'   => "{$prefix}ciastocna_rekon",
+						'name' => 'Čiastočná rekonštrukcia',
+						'id'   => "{$prefix}ciastocna_rekonstrukcia",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+				)			
+			);
+			
+			
+			// Rozsirujuce informacie pre domy
+			$meta_boxes[] = array(
+				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
+				'id' => 'domy',
+			
+				// Meta box title - Will appear at the drag and drop handle bar. Required.
+				'title' => 'Rozširujúce informácie o dome',
+			
+				// Post types, accept custom post types as well - DEFAULT is array('post'). Optional.
+				'pages' => array( 'post' ),
+			
+				// Where the meta box appear: normal (default), advanced, side. Optional.
+				'context' => 'normal',
+			
+				// Order of meta box: high (default), low. Optional.
+				'priority' => 'high',
+			
+				// List of meta fields
+				'fields' => array(
+					// NUMBER
+					array(
+						'name' => 'Počet izieb',
+						'id'   => "{$prefix}pocet_izieb",
+						'type' => 'number',
+						'min'  => 0,
+						'step' => 1,
+						'desc'  => 'Je možné zadávať aj desatinné čísla',
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Loggia alebo balkón',
+						'id'   => "{$prefix}loagia_balkon",
 						'type' => 'checkbox',
 						// Value can be 0 or 1
 						'std'  => 0,
 					),
 					// CHECKBOX
 					array(
-						'name' => 'len ponuky s fotografiou',
-						'id'   => "{$prefix}len_s_foto",
+						'name' => 'Výťah',
+						'id'   => "{$prefix}vytah",
 						'type' => 'checkbox',
 						// Value can be 0 or 1
 						'std'  => 0,
 					),
-					// SELECT BOX
+					// CHECKBOX
 					array(
-						'name'     => 'Maklér',
-						'id'       => "{$prefix}makler",
-						'type'     => 'select',
-						// Array of 'value' => 'Label' pairs for select box
-						'options'  => array(
-							'value1' => 'Meno1 Priezvisko1',
-							'value2' => 'Meno2 Priezvisko2',
-							'value3' => 'Meno3 Priezvisko3',
-							'value4' => 'Meno4 Priezvisko4',
-							'value5' => 'Meno5 Priezvisko5',
-							'value6' => 'Meno6 Priezvisko6',
-							'value7' => 'Meno7 Priezvisko7',
-							'value8' => 'Meno8 Priezvisko8',
-						),
-						// Select multiple values, optional. Default is false.
-						'multiple' => false,
+						'name' => 'Osobné vlastníctvo',
+						'id'   => "{$prefix}osobne_vlastnictvo",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
 					),
-				),
-				'validation' => array(
-					'rules' => array(
-						"{$prefix}password" => array(
-							'required'  => true,
-							'minlength' => 7,
-						),
+					// CHECKBOX
+					array(
+						'name' => 'Tehlový byt',
+						'id'   => "{$prefix}tehlovy_byt",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
 					),
-					// optional override of default jquery.validate messages
-					'messages' => array(
-						"{$prefix}password" => array(
-							'required'  => 'Password is required',
-							'minlength' => 'Password must be at least 7 characters',
-						),
-					)
-				)
+					// CHECKBOX
+					array(
+						'name' => 'Pôvodný stav',
+						'id'   => "{$prefix}povodny_stav",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Novostavba',
+						'id'   => "{$prefix}novostavba",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Rekonštrukcia',
+						'id'   => "{$prefix}rekonstrukcia",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Čiastočná rekonštrukcia',
+						'id'   => "{$prefix}ciastocna_rekonstrukcia",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+				)			
+			);
+			
+			
+			// Rozsirujuce informacie pre pozemky
+			$meta_boxes[] = array(
+				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
+				'id' => 'pozemky',
+			
+				// Meta box title - Will appear at the drag and drop handle bar. Required.
+				'title' => 'Rozširujúce informácie o pozemku',
+			
+				// Post types, accept custom post types as well - DEFAULT is array('post'). Optional.
+				'pages' => array( 'post' ),
+			
+				// Where the meta box appear: normal (default), advanced, side. Optional.
+				'context' => 'normal',
+			
+				// Order of meta box: high (default), low. Optional.
+				'priority' => 'high',
+			
+				// List of meta fields
+				'fields' => array(
+					// CHECKBOX
+					array(
+						'name' => 'Pre rodinný dom',
+						'id'   => "{$prefix}pre_rodinny_dom",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Pre bytovú výstavbu',
+						'id'   => "{$prefix}pre_bytovu_vystavbu",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Pre komerčnú výstavbu',
+						'id'   => "{$prefix}pre_komercnu_vystavbu",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Pre priemysel',
+						'id'   => "{$prefix}pre_priemysel",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+				)			
+			);
+			
+			
+			// Rozsirujuce informacie pre ostatne
+			$meta_boxes[] = array(
+				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
+				'id' => 'ostatne',
+			
+				// Meta box title - Will appear at the drag and drop handle bar. Required.
+				'title' => 'Rozširujúce informácie o ostatných',
+			
+				// Post types, accept custom post types as well - DEFAULT is array('post'). Optional.
+				'pages' => array( 'post' ),
+			
+				// Where the meta box appear: normal (default), advanced, side. Optional.
+				'context' => 'normal',
+			
+				// Order of meta box: high (default), low. Optional.
+				'priority' => 'high',
+			
+				// List of meta fields
+				'fields' => array(
+					// CHECKBOX
+					array(
+						'name' => 'Chata alebo chalupa',
+						'id'   => "{$prefix}chata_chalupa",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+					// CHECKBOX
+					array(
+						'name' => 'Garáž',
+						'id'   => "{$prefix}garaz",
+						'type' => 'checkbox',
+						// Value can be 0 or 1
+						'std'  => 0,
+					),
+				)			
 			);
 
     	}
@@ -566,10 +748,6 @@ if ( ! class_exists( 'reality' ) ) {
 
 
 		public function reality_metabox_def() {
-			
-			// mytheme_add_box		-	reality_metabox_def
-			// mytheme_show_box		-	reality_metabox_show
-			// mytheme_save_data	-	reality_metabox_save
 			
 			// Make sure there's no errors when the plugin is deactivated or during upgrade
 			global $meta_boxes;
