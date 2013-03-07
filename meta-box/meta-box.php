@@ -17,13 +17,13 @@ define( 'RWMB_VER', '4.2.2' );
 
 // Define plugin URLs, for fast enqueuing scripts and styles
 if ( ! defined( 'RWMB_URL' ) )
-	define( 'RWMB_URL', plugin_dir_url( __FILE__ ) );
+define( 'RWMB_URL', plugin_dir_url( __FILE__ ) );
 define( 'RWMB_JS_URL', trailingslashit( RWMB_URL . 'js' ) );
 define( 'RWMB_CSS_URL', trailingslashit( RWMB_URL . 'css' ) );
 
 // Plugin paths, for including files
 if ( ! defined( 'RWMB_DIR' ) )
-	define( 'RWMB_DIR', plugin_dir_path( __FILE__ ) );
+define( 'RWMB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RWMB_INC_DIR', trailingslashit( RWMB_DIR . 'inc' ) );
 define( 'RWMB_FIELDS_DIR', trailingslashit( RWMB_INC_DIR . 'fields' ) );
 define( 'RWMB_CLASSES_DIR', trailingslashit( RWMB_INC_DIR . 'classes' ) );
