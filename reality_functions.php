@@ -86,7 +86,8 @@ if ( ! class_exists( 'reality' ) ) {
 
 	    	$this->reality_metabox_add();
 	    	add_action( 'admin_init', array( &$this, 'reality_metabox_def' ) ) ;
-	    	
+  
+        add_action( 'admin_head', array( &$this, 'js_reality' ) );	    	
 		}
 
 			 	
@@ -273,7 +274,6 @@ if ( ! class_exists( 'reality' ) ) {
 
     
 		public function reality_metabox_add() {
-
 			
 			$prefix = 'reality_';
 			$text_label_size = 50;
@@ -457,7 +457,7 @@ if ( ! class_exists( 'reality' ) ) {
       		// Rozsirujuce informacie pre byty
 			$meta_boxes[] = array(
 				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
-				'id' => 'byty',
+				'id' => 'Byt',
 			
 				// Meta box title - Will appear at the drag and drop handle bar. Required.
 				'title' => 'Rozširujúce informácie o byte',
@@ -562,7 +562,7 @@ if ( ! class_exists( 'reality' ) ) {
 			// Rozsirujuce informacie pre domy
 			$meta_boxes[] = array(
 				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
-				'id' => 'domy',
+				'id' => 'Dom',
 			
 				// Meta box title - Will appear at the drag and drop handle bar. Required.
 				'title' => 'Rozširujúce informácie o dome',
@@ -602,7 +602,7 @@ if ( ! class_exists( 'reality' ) ) {
 			// Rozsirujuce informacie pre pozemky
 			$meta_boxes[] = array(
 				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
-				'id' => 'pozemky',
+				'id' => 'Pozemok',
 			
 				// Meta box title - Will appear at the drag and drop handle bar. Required.
 				'title' => 'Rozširujúce informácie o pozemku',
@@ -657,7 +657,7 @@ if ( ! class_exists( 'reality' ) ) {
 			// Rozsirujuce informacie pre ostatne
 			$meta_boxes[] = array(
 				// Meta box id, UNIQUE per meta box. Optional since 4.1.5
-				'id' => 'ostatne',
+				'id' => 'Ostatné',
 			
 				// Meta box title - Will appear at the drag and drop handle bar. Required.
 				'title' => 'Rozširujúce informácie o ostatných',
@@ -809,16 +809,16 @@ if ( ! class_exists( 'reality' ) ) {
 				
 			}	
 			
-			$this->vd($meta);
+		//	$this->vd($meta);
 			
 			if ( isset( $meta['reality_fotografie'] ) & !empty( $meta['reality_fotografie'] ) ) {
 
 				$photos = $meta['reality_fotografie'];
-				$url = get_attachment_link( $meta['reality_fotografie'][0] );
 				
 				foreach ( $photos as $photo ){
+          $url = get_attachment_link( $photo );
 					$image_attributes = wp_get_attachment_image_src( $photo ); // returns an array
-				    echo "<a href='$url' title='' rel='thickbox'><img src='$image_attributes[0]' width='$image_attributes[1]' height='$image_attributes[2]' alt='' /></a>";
+          echo "<a href='$url' title='' rel='thickbox'><img src='$image_attributes[0]' width='$image_attributes[1]' height='$image_attributes[2]' alt='' /></a>";
 				}
 				
 			}
@@ -862,8 +862,14 @@ if ( ! class_exists( 'reality' ) ) {
 /*****************************************************************************************************************
   Registracia globalnej premennej a vytvorenie objektu triedy
 *****************************************************************************************************************/		
+
+    public function js_reality() {
+      if(is_admin()){
+          wp_enqueue_script('custom_admin_script',  REALITY_URL.'/reality.js', array('jquery'));
+      } 
+    }
 		
-	    
+
 	}	
   
 }
