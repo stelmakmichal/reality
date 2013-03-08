@@ -1,7 +1,9 @@
-Zasuvny modul pre realitnu kancelariu GA-KOS s.r.o.
+﻿Zásuvný modul pre realitnú kanceláriu GA-KOS s.r.o.
 -------------------------------------------------------
-Autor: Lukas Staron 
+Autor: <b>Lukáš Staroň</b> <i>(lukas.staron@gmail.com)</i>
 
-Kontakt: lukas.staron@gmail.com 
+Odborná výpomoc: <b>Michal Štelmák</b> <i>(michal.stelmak@gmail.com)</i>
 
-Verzia: 1.0.2
+Verzia
+-------------------------------------------------------
+Aktuálna verzia: 1.0.6

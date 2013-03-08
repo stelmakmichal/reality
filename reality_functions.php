@@ -764,7 +764,6 @@ if ( ! class_exists( 'reality' ) ) {
 
 					case "Dom": {
 						
-						
 						echo "Typ nehnuteľnosti: " . $meta["{$prefix}typ_nehnutelnosti"][0] . "<br/>";
 						echo "Nehnuteľnosť je určená na:"; 
 							$akcie = $meta["{$prefix}typ_akcie"]; foreach ( $akcie as $akcia ){ echo " " . $akcia; }
@@ -809,6 +808,7 @@ if ( ! class_exists( 'reality' ) ) {
 						
 					}
 					case "Ostatné": {	
+						
 						echo "Typ nehnuteľnosti: " . $meta["{$prefix}typ_nehnutelnosti"][0] . "<br/>";
 						echo "Nehnuteľnosť je určená na:"; 
 							$akcie = $meta["{$prefix}typ_akcie"]; foreach ( $akcie as $akcia ){ echo " " . $akcia; }
