@@ -6,4 +6,4 @@ Odborná výpomoc: <b>Michal Štelmák</b> <i>(michal.stelmak@gmail.com)</i>
 
 Verzia
 -------------------------------------------------------
-Aktuálna verzia: 1.0.6
+Aktuálna verzia: 1.0.7

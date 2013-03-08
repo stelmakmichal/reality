@@ -727,35 +727,38 @@ if ( ! class_exists( 'reality' ) ) {
 				
 			if ( isset( $meta["{$prefix}typ_nehnutelnosti"][0] ) & !empty( $meta["{$prefix}typ_nehnutelnosti"][0] ) ) {
 
+				
+				
+				echo "<table>";
+				echo "<tr><td>Typ nehnuteľnosti: </td><td>" . $meta["{$prefix}typ_nehnutelnosti"][0] . "</td></tr>";
+				echo "<tr><td>Nehnuteľnosť je určená na:</td><td>"; 
+					$akcie = $meta["{$prefix}typ_akcie"]; foreach ( $akcie as $akcia ){ echo " " . $akcia; }
+				echo "</td></tr>";
+				echo "<tr><td>Kraj: </td><td>" . $meta["{$prefix}kraj"][0] . "</td></tr>";
+				echo "<tr><td>Okres: </td><td>" . $meta["{$prefix}okres"][0] . "</td></tr>";
+				echo "<tr><td>Mesto: </td><td>" . $meta["{$prefix}mesto"][0] . "</td></tr>";
+				echo "<tr><td>PSČ: </td><td>" . $meta["{$prefix}psc"][0] . "</td></tr>";
+				echo "<tr><td>Ulica a číslo: </td><td>" . $meta["{$prefix}ulica"][0] . "</td></tr>";
+				echo "<tr><td>Zodpovedný maklér: </td><td>" . $meta["{$prefix}makler"][0] . "</td></tr>";
+				echo "<tr><td>Výmera nehnuteľnosti: </td><td>" . $meta["{$prefix}vymera"][0] . " m<sup>2</sup></td></tr>";	
+				echo "<tr><td><b>Cena: </b></td><td><b>" . $meta["{$prefix}cena"][0] . " €</b></td></tr>";
+				echo "</table><br/><br/><br/>";
+				
 				switch ( $meta["{$prefix}typ_nehnutelnosti"][0] ) {
 					
 					case "Byt": {
 						
 						echo "<table>";
-						echo "Typ nehnuteľnosti: " . $meta["{$prefix}typ_nehnutelnosti"][0] . "<br/>";
-						echo "Nehnuteľnosť je určená na:"; 
-							$akcie = $meta["{$prefix}typ_akcie"]; foreach ( $akcie as $akcia ){ echo " " . $akcia; }
-						echo "<br/>";
-						echo "Kraj: " . $meta["{$prefix}kraj"][0] . "<br/>";
-						echo "Okres: " . $meta["{$prefix}okres"][0] . "<br/>";
-						echo "Mesto: " . $meta["{$prefix}mesto"][0] . "<br/>";
-						echo "PSČ: " . $meta["{$prefix}psc"][0] . "<br/>";
-						echo "Ulica a číslo: " . $meta["{$prefix}ulica"][0] . "<br/>";
-						echo "<b>Cena: " . $meta["{$prefix}cena"][0] . " €</b><br/>";
-						echo "Výmera nehnuteľnosti: " . $meta["{$prefix}vymera"][0] . " m<sup>2</sup><br/>";
-						echo "Zodpovedný maklér: " . $meta["{$prefix}makler"][0] . "<br/>";	
-						echo "Počet izieb: " . $meta["{$prefix}pocet_izieb"][0] . "<br/>";	
-						echo "Poschodie: " . $meta["{$prefix}poschodie"][0] . "<br/>";	
-						
-						echo "Logia alebo balkón: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}loagia_balkon"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Výťah: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}vytah"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Byt v osobnom vlastníctve: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}osobne_vlastnictvo"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Tehlový byt: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}tehlovy_byt"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Byt v pôvodnom stave: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}povodny_stav"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Byt v novostavbe: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}novostavba"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Byt po rekonštrukcii: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}rekonstrukcia"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Byt po čiastočnej rekonštrukcii: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}ciastocna_rekonstrukcia"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						
+						echo "<tr><td>Počet izieb: </td><td>" . $meta["{$prefix}pocet_izieb"][0] . "</td></tr>";	
+						echo "<tr><td>Poschodie: </td><td>" . $meta["{$prefix}poschodie"][0] . "</td></tr>";	
+						echo "<tr><td>Logia alebo balkón: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}loagia_balkon"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Výťah: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}vytah"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Byt v osobnom vlastníctve: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}osobne_vlastnictvo"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Tehlový byt: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}tehlovy_byt"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Byt v pôvodnom stave: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}povodny_stav"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Byt v novostavbe: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}novostavba"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Byt po rekonštrukcii: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}rekonstrukcia"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Byt po čiastočnej rekonštrukcii: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}ciastocna_rekonstrukcia"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
 						echo "</table>";
 						
 						break;
@@ -764,21 +767,10 @@ if ( ! class_exists( 'reality' ) ) {
 
 					case "Dom": {
 						
-						echo "Typ nehnuteľnosti: " . $meta["{$prefix}typ_nehnutelnosti"][0] . "<br/>";
-						echo "Nehnuteľnosť je určená na:"; 
-							$akcie = $meta["{$prefix}typ_akcie"]; foreach ( $akcie as $akcia ){ echo " " . $akcia; }
-						echo "<br/>";
-						echo "Kraj: " . $meta["{$prefix}kraj"][0] . "<br/>";
-						echo "Okres: " . $meta["{$prefix}okres"][0] . "<br/>";
-						echo "Mesto: " . $meta["{$prefix}mesto"][0] . "<br/>";
-						echo "PSČ: " . $meta["{$prefix}psc"][0] . "<br/>";
-						echo "Ulica a číslo: " . $meta["{$prefix}ulica"][0] . "<br/>";
-						echo "<b>Cena: " . $meta["{$prefix}cena"][0] . " €</b><br/>";
-						echo "Výmera nehnuteľnosti: " . $meta["{$prefix}vymera"][0] . " m<sup>2</sup><br/>";
-						echo "Zodpovedný maklér: " . $meta["{$prefix}makler"][0] . "<br/>";	
-						echo "Počet izieb: " . $meta["{$prefix}pocet_izieb_dom"][0] . "<br/>";	
-						echo "Novostavba: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}novostavba_dom"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						
+						echo "<table>";
+						echo "<tr><td>Počet izieb: </td><td>" . $meta["{$prefix}pocet_izieb_dom"][0] . "</td></tr>";	
+						echo "<tr><td>Novostavba: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}novostavba_dom"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "</table>";
 						
 						break;	
 						
@@ -786,45 +778,23 @@ if ( ! class_exists( 'reality' ) ) {
 						
 					case "Pozemok": {
 						
-						echo "Typ nehnuteľnosti: " . $meta["{$prefix}typ_nehnutelnosti"][0] . "<br/>";
-						echo "Nehnuteľnosť je určená na:"; 
-							$akcie = $meta["{$prefix}typ_akcie"]; foreach ( $akcie as $akcia ){ echo " " . $akcia; }
-						echo "<br/>";
-						echo "Kraj: " . $meta["{$prefix}kraj"][0] . "<br/>";
-						echo "Okres: " . $meta["{$prefix}okres"][0] . "<br/>";
-						echo "Mesto: " . $meta["{$prefix}mesto"][0] . "<br/>";
-						echo "PSČ: " . $meta["{$prefix}psc"][0] . "<br/>";
-						echo "Ulica a číslo: " . $meta["{$prefix}ulica"][0] . "<br/>";
-						echo "<b>Cena: " . $meta["{$prefix}cena"][0] . " €</b><br/>";
-						echo "Výmera nehnuteľnosti: " . $meta["{$prefix}vymera"][0] . " m<sup>2</sup><br/>";
-						echo "Zodpovedný maklér: " . $meta["{$prefix}makler"][0] . "<br/>";	
-						
-						echo "Určený pre rodinný dom: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_rodinny_dom"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Určený pre bytovú výstavbu: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_bytovu_vystavbu"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Určený pre komerčnú výstavbu: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_komercnu_vystavbu"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Určený pre priemyselné využitie: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_priemysel"][0] == 1 ) ? 'checked' : '' ) . "><br/>";						
+						echo "<table>";
+						echo "<tr><td>Určený pre rodinný dom: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_rodinny_dom"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Určený pre bytovú výstavbu: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_bytovu_vystavbu"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Určený pre komerčnú výstavbu: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_komercnu_vystavbu"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Určený pre priemyselné využitie: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}pre_priemysel"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";						
+						echo "</table>";
 						
 						break;	
 						
 					}
 					case "Ostatné": {	
 						
-						echo "Typ nehnuteľnosti: " . $meta["{$prefix}typ_nehnutelnosti"][0] . "<br/>";
-						echo "Nehnuteľnosť je určená na:"; 
-							$akcie = $meta["{$prefix}typ_akcie"]; foreach ( $akcie as $akcia ){ echo " " . $akcia; }
-						echo "<br/>";
-						echo "Kraj: " . $meta["{$prefix}kraj"][0] . "<br/>";
-						echo "Okres: " . $meta["{$prefix}okres"][0] . "<br/>";
-						echo "Mesto: " . $meta["{$prefix}mesto"][0] . "<br/>";
-						echo "PSČ: " . $meta["{$prefix}psc"][0] . "<br/>";
-						echo "Ulica a číslo: " . $meta["{$prefix}ulica"][0] . "<br/>";
-						echo "<b>Cena: " . $meta["{$prefix}cena"][0] . " €</b><br/>";
-						echo "Výmera nehnuteľnosti: " . $meta["{$prefix}vymera"][0] . " m<sup>2</sup><br/>";
-						echo "Zodpovedný maklér: " . $meta["{$prefix}makler"][0] . "<br/>";	
+						echo "<table>";
+						echo "<tr><td>Chata alebo chalupa: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}chata_chalupa"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";
+						echo "<tr><td>Garáž: </td><td><input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}garaz"][0] == 1 ) ? 'checked' : '' ) . "></td></tr>";						
+						echo "</table>";
 						
-						echo "Chata alebo chalupa: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}chata_chalupa"][0] == 1 ) ? 'checked' : '' ) . "><br/>";
-						echo "Garáž: <input type='checkbox' disabled='disabled'" . ( ( $meta["{$prefix}garaz"][0] == 1 ) ? 'checked' : '' ) . "><br/>";						
-
 						break;	
 						
 					}
@@ -844,10 +814,11 @@ if ( ! class_exists( 'reality' ) ) {
 			if ( isset( $meta['reality_fotografie'] ) & !empty( $meta['reality_fotografie'] ) ) {
 
 				$photos = $meta['reality_fotografie'];
+				$url = get_attachment_link( $meta['reality_fotografie'][0] );
 				
 				foreach ( $photos as $photo ){
 					$image_attributes = wp_get_attachment_image_src( $photo ); // returns an array
-				    echo "<a href='{$image_attributes[0]}' title='' rel='thickbox'><img src='$image_attributes[0]' width='$image_attributes[1]' height='$image_attributes[2]' alt='' /></a>";
+				    echo "<a href='$url' title='' rel='thickbox'><img src='$image_attributes[0]' width='$image_attributes[1]' height='$image_attributes[2]' alt='' /></a>";
 				}
 				
 			}
